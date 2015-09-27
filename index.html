@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Motor Trend Car Road Test (mtcars) Exploration</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Motor Trend Car Road Test (mtcars) Exploration">
+  <meta name="author" content="Omkar Udipi">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Motor Trend Car Road Test (mtcars) Exploration</h1>
+    <h2></h2>
+    <p>Omkar Udipi<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Introduction</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Thank you for checking out my Shiny App. Here is a short introduction to get started using this App. This App uses R&#39;s GGPlot2 and some of its features to render the plot, which will be displayed in the &#39;Plot&#39; tab. </p>
+
+<p>Data loaded is from R Base package&#39;s &#39;mtcars&#39; which contain data extracted from the 1974 Motor Trend US magazine, and comprises of fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973-74 models). </p>
+
+<p>The sidebar panel allows you to choose the key axis (X &amp; Y) as well as a third optional axis (Z) which will be shown in color. </p>
+
+<p>The sidebar panel also allows you to change your plot size, enable jitter, smoothing (works well on non-factored dimensions) as well as use advanced facet plots (take note: complex facets might take slightly longer to render). </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>User Layout and UI script</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The App&#39;s User Interface was designed with a left sidebarPanel featuring plot options and a mainPanel which contained 2 tabs
+1. Tab 1: Introduction
+2. Tab 2: Plot Result</p>
+
+<p>The App&#39;s UI script contains the following form objects which interacts with users:</p>
+
+<pre><code class="r">selectInput(&#39;y&#39;, &#39;Y-axis&#39;, dropdownlist, dropdownlist[[1]]),
+selectInput(&#39;x&#39;, &#39;X-axis&#39;, dropdownlist, dropdownlist[[2]]),
+selectInput(&#39;color&#39;, &#39;Z-axis (optional)&#39;, c(&#39;None&#39;, dropdownlist)),
+sliderInput(&#39;pointSize&#39;, &#39;Point Size&#39;, min=1, max=10, value=2, step=1, round=0),
+checkboxInput(&#39;jitter&#39;, &#39;Jittered to reduce overplotting&#39;),
+checkboxInput(&#39;smooth&#39;, &#39;Smoothed conditional mean&#39;),
+selectInput(&#39;facet_row&#39;, &#39;Facet Row&#39;, c(None=&#39;.&#39;, dropdownlist)),
+selectInput(&#39;facet_col&#39;, &#39;Facet Column&#39;, c(None=&#39;.&#39;, dropdownlist))
+tabPanel(&#39;Plot&#39;, plotOutput(&#39;plot&#39;))
+</code></pre>
+
+<p>Take note, some drop down list were added a &#39;None&#39; option with value &#39;.&#39;</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Server script</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The App&#39;s server script first instatiates a copy of mtcars and factorizes a few vectors.</p>
+
+<pre><code class="r">mtcars1 &lt;- mtcars
+mtcars1$cyl &lt;- factor(mtcars1$cyl)      mtcars1$vs &lt;- factor(mtcars1$vs)
+mtcars1$am &lt;- factor(mtcars1$am)        mtcars1$gear &lt;- factor(mtcars1$gear)
+mtcars1$carb &lt;- factor(mtcars1$carb)
+</code></pre>
+
+<p>Next, server renders the plot based on the initial &#39;onLoad&#39; and user set values.</p>
+
+<pre><code class="r">p &lt;- ggplot(datasetx(),aes_string(x=input$x, y=input$y))+geom_point(size=input$pointSize)
+if (input$color != &#39;None&#39;)      p &lt;- p + aes_string(color=input$color)
+facets &lt;- paste(input$facet_row, &#39;~&#39;, input$facet_col)
+if (facets != &#39;. ~ .&#39;)          p &lt;- p + facet_grid(facets)
+if (input$jitter)               p &lt;- p + geom_jitter()
+if (input$smooth)               p &lt;- p + geom_smooth()
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Exploration</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>In our own analysis using this App, we saw a relationship between cars&#39; MPG and Weight (wt). When we analyzed further (outside this App), we found that cars will decrease MPG by 2.5 for every 1000lb increase in weight after adjusting variables horsepower, cylinder and transmission. </p>
+
+<p>We hope that this App would allow you to explore and find patterns for your analysis. Thanks.</p>
+
+<p><img src="assets/fig/unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4"> </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Introduction'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='User Layout and UI script'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Server script'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Exploration'>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='NA'>
+         5
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- MathJax: Fall back to local if CDN offline but local image fonts are not supported (saves >100MB) -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        processEscapes: true
+      }
+    });
+  </script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <!-- <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script> -->
+  <script>window.MathJax || document.write('<script type="text/x-mathjax-config">MathJax.Hub.Config({"HTML-CSS":{imageFont:null}});<\/script><script src="libraries/widgets/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"><\/script>')
+</script>
+<!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
