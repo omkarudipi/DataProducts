@@ -83,7 +83,7 @@ In our own analysis using this App, we saw a relationship between cars' MPG and 
 
 We hope that this App would allow you to explore and find patterns for your analysis. Thanks.
 
-```{r fig.height=5,echo=FALSE,message=FALSE}
+```{r fig.height=4,echo=FALSE,message=FALSE}
 library(ggplot2)
 data(mtcars)
 mtcars1 <- mtcars
@@ -98,9 +98,4 @@ p <- p + geom_smooth()
 print(p)
 
 ```
-
-
-
-
---- .class #id 
 
