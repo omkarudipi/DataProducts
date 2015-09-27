@@ -29,7 +29,7 @@ function(input, output) {
         if (input$jitter)
             p <- p + geom_jitter()
         if (input$smooth)
-            p <- p + geom_smooth()
+            p <- p + geom_smooth(method=lm)
              
         print(p)
         
