@@ -82,8 +82,3 @@ We hope that this App would allow you to explore and find patterns for your anal
 
 ![plot of chunk unnamed-chunk-4](assets/fig/unnamed-chunk-4-1.png) 
 
-
-
-
---- .class #id 
-
